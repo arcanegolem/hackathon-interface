@@ -1,17 +1,13 @@
-# hackathon-interface
-
-    def show_start_in_status_menu(self, file_name):
-        current_time = str(datetime.now().time())
-        current_time = current_time[:current_time.find('.')]
-        answer = """< body style = " font-family:'Consolas'; font-size:10pt; font-weight:400; font-style:normal;" >
-        < p style = " margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;" >
-        < span style = " color:#ffffff;" >[{}]Детекция медведей в папке - {}...< / span >< / p >< / body >""".format(current_time, file_name)
-        self.textBrowser.append(answer)
-
-    def show_data_in_status_menu(self, counter):
-        current_time = str(datetime.now().time())
-        current_time = current_time[:current_time.find('.')]
-        answer = """< body style = " font-family:'Consolas'; font-size:10pt; font-weight:400; font-style:normal;" >
-        < p style = " margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;" >
-        < span style = " color:#ffffff;" >[{}]Найдено: {} < / span >< / p >< / body >""".format(current_time, counter)
-        self.textBrowser.append(answer)
+_translate = QCoreApplication.translate
+        radius = 15
+        self.textBrowser = QTextBrowser(self.centralwidget)
+        self.textBrowser.setGeometry(QRect(50, 80, 350, 450))
+        self.textBrowser.setStyleSheet("background-color: rgb(0, 0, 0);\n"
+                                       "font: 12pt \"Consolas\";\n"
+                                       "border-top-left-radius:{0}px;\n"
+                                       "border-bottom-left-radius:{0}px;\n"
+                                       "border-top-right-radius:{0}px;\n"
+                                       "border-bottom-right-radius:{0}px;\n"
+                                       "padding: 10px".format(radius)
+                                       )
+        self.textBrowser.setObjectName("textBrowser")
