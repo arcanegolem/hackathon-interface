@@ -59,8 +59,8 @@ class MainWindow(QMainWindow):
         self.searchButton = PicButton(pixmap=QPixmap("assets/search.png"), pixmap_hover=QPixmap("assets/search_hover.png"), pixmap_pressed=QPixmap("assets/search_pressed.png"), parent=self.centralwidget)
         self.searchButton.setGeometry(QRect(10, 540, 50, 50))
 
-        self.searchButton = PicButton(pixmap=QPixmap("assets/upload.png"), pixmap_hover=QPixmap("assets/upload_hover.png"), pixmap_pressed=QPixmap("assets/upload_pressed.png"), parent=self.centralwidget)
-        self.searchButton.setGeometry(QRect(70, 540, 50, 50))
+        self.uploadButton = PicButton(pixmap=QPixmap("assets/upload.png"), pixmap_hover=QPixmap("assets/upload_hover.png"), pixmap_pressed=QPixmap("assets/upload_pressed.png"), parent=self.centralwidget)
+        self.uploadButton.setGeometry(QRect(70, 540, 50, 50))
 
         self.load_functionality()
 
