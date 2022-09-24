@@ -21,6 +21,8 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
 
+        self.folderPaths = {}
+
         # Window size
         self.WIDTH = 900
         self.HEIGHT = 540
@@ -198,6 +200,8 @@ class MainWindow(QMainWindow):
                 border-right: 3px solid rgb(153, 153,153);}
         ''')
 
+        self.fileList.itemDoubleClicked.connect(self.openFolder)
+
         '''Test items'''
         # self.testItem = QListWidgetItem()
         # self.testItem.setIcon(QIcon("assets/folder.png"))
@@ -219,7 +223,6 @@ class MainWindow(QMainWindow):
         # self.uploadButton = PicButton(pixmap=QPixmap("assets/upload.png"), pixmap_hover=QPixmap("assets/upload_hover.png"), pixmap_pressed=QPixmap("assets/upload_pressed.png"), parent=self.centralwidget)
         # self.uploadButton.setGeometry(QRect(70, 540, 50, 50))
 
-        self.folderPaths = {}
 
         self.load_functionality()
 
@@ -231,16 +234,22 @@ class MainWindow(QMainWindow):
         self.processButton.clicked.connect(self.startProcessing)
         self.openResultFolderButton.clicked.connect(self.openResultFolder)
 
+    def openFolder(self, item):
+        path = str(self.folderPaths[item.text()])
+        path = path.replace("/", "\\")
+        subprocess.Popen(["explorer", path])
+
     def startProcessing(self):
         self.processProgress.setValue(75)
 
     def openResultFolder(self):
         path = os.path.abspath("Results")
+        print(path)
         subprocess.Popen(["explorer", path])
 
 
     def addFolder(self):
-        text = str(QFileDialog.getExistingDirectory(self, 'Select Folder'))
+        text = QFileDialog.getExistingDirectory(self, 'Select Folder')
         item = QListWidgetItem()
         item.setText(text.split("/")[-1])
         item.setIcon(QIcon("assets/folder.png"))
