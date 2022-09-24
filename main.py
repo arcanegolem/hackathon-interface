@@ -163,8 +163,7 @@ class MainWindow(QMainWindow):
                                        "border-bottom-right-radius:{0}px;\n"
                                        "padding: 10px".format(radius)
                                        )
-        self.textBrowser.setObjectName("textBrowser")
-        self.textBrowser.append("Файл 'название' обработан!")
+        self.textBrowser.append("< span style = \" color:#ffffff;\" > Output Terminal: < / span >")
 
         # Progress bar
         self.processProgress = QProgressBar(self.centralwidget)
@@ -181,7 +180,7 @@ class MainWindow(QMainWindow):
         ''')
         self.processProgress.setTextVisible(False)
         self.processProgress.setValue(0)
-        self.processProgress.setVisible(False)
+        #self.processProgress.setVisible(False)
 
 
         # File list view
@@ -233,12 +232,11 @@ class MainWindow(QMainWindow):
         self.openResultFolderButton.clicked.connect(self.openResultFolder)
 
     def startProcessing(self):
-        self.processProgress.setVisible(True)
         self.processProgress.setValue(75)
 
     def openResultFolder(self):
         path = os.path.abspath("Results")
-        subprocess.Popen("explorer " + path)
+        subprocess.Popen(["explorer", path])
 
 
     def addFolder(self):
@@ -246,8 +244,10 @@ class MainWindow(QMainWindow):
         item = QListWidgetItem()
         item.setText(text.split("/")[-1])
         item.setIcon(QIcon("assets/folder.png"))
-        self.fileList.addItem(item)
-        self.folderPaths[text.split("/")[-1]] = text
+
+        if len(item.text()) > 0 and item.text() not in self.folderPaths.keys():
+            self.fileList.addItem(item)
+            self.folderPaths[text.split("/")[-1]] = text
 
     def removeFolder(self):
         selected = self.fileList.selectedItems()
