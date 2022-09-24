@@ -8,14 +8,22 @@ from datetime import datetime
 
 from picbutton import PicButton
 
+import os
+import subprocess
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
+        try:
+            os.mkdir("Results")
+        except Exception:
+            pass
+
         # Window size
         self.WIDTH = 900
-        self.HEIGHT = 600
+        self.HEIGHT = 540
         self.resize(self.WIDTH, self.HEIGHT)
 
         # Widget
@@ -39,30 +47,39 @@ class MainWindow(QMainWindow):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setWindowOpacity(1)
 
+        # Background
+        # self.bg = QLabel(self.centralwidget)
+        # self.bg.setPixmap(QPixmap("assets/iceberg_background.jpg"))
+        # self.bg.resize(600, 600)
+        # self.bg.setGeometry(QRect(0, 0, 600, 600))
+        self.bg_2d = QLabel(self.centralwidget)
+        self.bg_2d.setStyleSheet('''
+            background: rgb(220, 220, 220);
+            
+        ''')
+        self.bg_2d.setGeometry(QRect(40, 70, 420, 420))
+
         # Top left icon
         self.iconMascot = QLabel(self.centralwidget)
         self.iconMascot.setPixmap(QPixmap("assets/icon_xs.png"))
         self.iconMascot.resize(50, 50)
         self.iconMascot.setGeometry(QRect(10, 10, 50, 50))
+        self.iconMascot.setStyleSheet('''
+            background: transparent;
+        ''')
 
-        _translate = QCoreApplication.translate
-        radius = 15
-        self.textBrowser = QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QRect(50, 80, 400, 400))
-        self.textBrowser.setStyleSheet("background-color: rgb(0, 0, 0);\n"
-                                       "font: 12pt \"Consolas\";\n"
-                                       "border-top-left-radius:{0}px;\n"
-                                       "border-bottom-left-radius:{0}px;\n"
-                                       "border-top-right-radius:{0}px;\n"
-                                       "border-bottom-right-radius:{0}px;\n"
-                                       "padding: 10px".format(radius)
-                                       )
-        self.textBrowser.setObjectName("textBrowser")
+        # Top left name
+        font_id = QFontDatabase.addApplicationFont("assets/PlayfairDisplay-VariableFont_wght.ttf")
+        font = QFont("Playfair Display")
 
-        # # Top left name
-        # self.message = QLabel(self.centralwidget)
-        # self.message.setPixmap(QPixmap("assets/polar_search_v1.png"))
-        # self.message.setGeometry(60, 10, 381, 50)
+        self.message = QLabel(self.centralwidget)
+        self.message.setText("Полярник")
+        self.message.setFont(font)
+        self.message.setGeometry(60, 10, 381, 50)
+        self.message.setStyleSheet('''
+            font-weight: bold;
+            font: 30px;
+        ''')
 
         # Exit button
         self.exitButton = PicButton(pixmap=QPixmap("assets/exitbutton.png"), pixmap_hover=QPixmap("assets/exitbutton_hover.png"), pixmap_pressed=QPixmap("assets/exitbutton_hover.png"), parent=self.centralwidget)
@@ -79,7 +96,9 @@ class MainWindow(QMainWindow):
         self.addFileButton.setGeometry(500, 500, 80, 20)
         self.addFileButton.setStyleSheet('''
             QPushButton {background: rgb(204, 204, 204);
-            border-radius: 10px;}
+            border-radius: 5px;
+            border-bottom: 3px solid rgb(153, 153, 153);
+            border-right: 3px solid rgb(153, 153,153);}
             QPushButton:hover {background: grey;}
             QPushButton:pressed {color: white;}
         ''')
@@ -90,18 +109,94 @@ class MainWindow(QMainWindow):
         self.removeFileButton.setGeometry(590, 500, 80, 20)
         self.removeFileButton.setStyleSheet('''
             QPushButton {background: rgb(204, 204, 204);
-            border-radius: 10px;}
+            border-radius: 5px;
+            border-bottom: 3px solid rgb(153, 153, 153);
+            border-right: 3px solid rgb(153, 153,153);}
             QPushButton:hover {background: grey;}
             QPushButton:pressed {color: white;}
         ''')
+
+        # Process button
+        self.processButton = QPushButton(self.centralwidget)
+        self.processButton.setText("Начать поиск")
+        self.processButton.setGeometry(50, 500, 80, 20)
+        self.processButton.setStyleSheet('''
+            QPushButton {background: rgb(204, 204, 204);
+            border-radius: 5px;
+            border-bottom: 3px solid rgb(153, 153, 153);
+            border-right: 3px solid rgb(153, 153,153);}
+            QPushButton:hover {background: grey;}
+            QPushButton:pressed {color: white;}
+        ''')
+
+        self.openResultFolderButton = QPushButton(self.centralwidget)
+        self.openResultFolderButton.setText("Открыть папку с результатами")
+        self.openResultFolderButton.setGeometry(140, 500, 190, 20)
+        self.openResultFolderButton.setStyleSheet('''
+            QPushButton {background: rgb(204, 204, 204);
+            border-radius: 5px;
+            border-bottom: 3px solid rgb(153, 153, 153);
+            border-right: 3px solid rgb(153, 153,153);}
+            QPushButton:hover {background: grey;}
+            QPushButton:pressed {color: white;}
+        ''')
+
+        # File list label
+        self.fileListLabel = QLabel(self.centralwidget)
+        self.fileListLabel.setText("Открытые папки:")
+        self.fileListLabel.setGeometry(QRect(500, 55, 200, 25))
+        self.fileListLabel.setFont(QFont("Arial"))
+        self.fileListLabel.setStyleSheet('''
+            font:15px;
+            background: transparent;
+        ''')
+
+        _translate = QCoreApplication.translate
+        radius = 15
+        self.textBrowser = QTextBrowser(self.centralwidget)
+        self.textBrowser.setGeometry(QRect(50, 80, 400, 375))
+        self.textBrowser.setStyleSheet("background-color: rgb(0, 0, 0);\n"
+                                       "font: 12pt \"Consolas\" white;\n"
+                                       "border-top-left-radius:{0}px;\n"
+                                       "border-bottom-left-radius:{0}px;\n"
+                                       "border-top-right-radius:{0}px;\n"
+                                       "border-bottom-right-radius:{0}px;\n"
+                                       "padding: 10px".format(radius)
+                                       )
+        self.textBrowser.setObjectName("textBrowser")
+        self.textBrowser.append("Файл 'название' обработан!")
+
+        # Progress bar
+        self.processProgress = QProgressBar(self.centralwidget)
+        self.processProgress.setGeometry(50, 465, 400, 15)
+        self.processProgress.setStyleSheet('''
+            QProgressBar {background: rgb(250, 250, 250);
+                border-bottom: 3px solid rgb(230, 230, 230);
+                border-right: 3px solid rgb(230, 230, 230);
+                border-radius: 5px;}
+            QProgressBar::chunk {
+                background-color: rgb(36, 154, 255);
+            }
+            
+        ''')
+        self.processProgress.setTextVisible(False)
+        self.processProgress.setValue(0)
+        self.processProgress.setVisible(False)
+
 
         # File list view
         self.fileList = QListWidget(self.centralwidget)
         self.fileList.setGeometry(QRect(500, 80, 350, 400))
         self.fileList.setStyleSheet('''
-            background: rgb(204, 204, 204);
-            padding: 10px;
-            font: 15px;
+            QListWidget {background: rgb(204, 204, 204);
+                padding: 10px;
+                font: 15px;
+                border-bottom: 3px solid rgb(153, 153, 153);
+                border-right: 3px solid rgb(153, 153,153);}
+            QListWidget:item {border-radius: 10px;
+                background: rgb(220, 220, 220);
+                border-bottom: 3px solid rgb(153, 153, 153);
+                border-right: 3px solid rgb(153, 153,153);}
         ''')
 
         '''Test items'''
@@ -134,6 +229,17 @@ class MainWindow(QMainWindow):
         self.closeButton.clicked.connect(self.showMinimized)
         self.addFileButton.clicked.connect(self.addFolder)
         self.removeFileButton.clicked.connect(self.removeFolder)
+        self.processButton.clicked.connect(self.startProcessing)
+        self.openResultFolderButton.clicked.connect(self.openResultFolder)
+
+    def startProcessing(self):
+        self.processProgress.setVisible(True)
+        self.processProgress.setValue(75)
+
+    def openResultFolder(self):
+        path = os.path.abspath("Results")
+        subprocess.Popen("explorer " + path)
+
 
     def addFolder(self):
         text = str(QFileDialog.getExistingDirectory(self, 'Select Folder'))
